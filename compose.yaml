@@ -1,0 +1,36 @@
+services:
+  ollama:
+    image: 'ollama/ollama:latest'
+    ports:
+      - '11000:11434'
+    environment:
+      - "OLLAMA_MODELS=llama3.1"
+    volumes:
+      - ollama:/root/.ollama
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    pull_policy: missing
+    volumes:
+      - open-webui:/app/backend/data
+    depends_on:
+      - ollama
+    ports:
+      - 3000:8080
+    environment:
+      - "OLLAMA_API_BASE_URL=http://ollama:11000/api"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=smartdev'
+      - 'POSTGRES_PASSWORD=sa'
+      - 'POSTGRES_USER=smartdev'
+    ports:
+      - '5432:5432'
+
+volumes:
+  ollama: { }
+  open-webui: { }
