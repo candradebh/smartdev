@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+/smartdev.log
+/logs/spring-boot-app.log
+/spring-shell.log
