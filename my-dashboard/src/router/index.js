@@ -1,6 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import HomePage from '@/components/HomePage.vue';
+import Login from '@/components/auth/Login.vue';
+import Register from '@/components/user/Register.vue';
+import Profile from '@/components/user/Profile.vue';
+import Settings from '@/components/user/Settings.vue';
 import ProjectList from '@/components/projects/ProjectList.vue';
 import ProjectsForm from '@/components/projects/ProjectsForm.vue';
 import ModelsIndex from '@/components/models/ModelsIndex.vue';
@@ -22,76 +26,114 @@ const routes = [
     {
         path: '/',
         name: 'HomePage',
-        component: HomePage
+        component: HomePage,
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/login',
+        name: 'LoginPage',
+        component: Login,
+        meta: {requiresAuth: false, hideNavbar: true}
+    },
+    {
+        path: '/register',
+        name: 'RegisterPage',
+        component: Register,
+        meta: {requiresAuth: false, hideNavbar: true}
+    },
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: Profile,
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/settings',
+        name: 'SettingPage',
+        component: Settings,
+        meta: {requiresAuth: true}
     },
     {
         path: '/developer',
         name: 'DeveloperChat',
-        component: DeveloperChat
+        component: DeveloperChat,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/projects',
         name: 'ProjectList',
-        component: ProjectList
+        component: ProjectList,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/projects/create',
         name: 'ProjectForm',
         component: ProjectsForm,
-        props: true
+        props: true,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/projects/:projectId/details',
         name: 'ProjectDetails',
-        component: ProjectDetails
+        component: ProjectDetails,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/models',
         name: 'ModelIndex',
-        component: ModelsIndex
+        component: ModelsIndex,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/models/create',
         name: 'ModelForm',
         component: ModelForm,
-        props: true
+        props: true,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/tasks',
         name: 'TasksIndex',
-        component: TasksIndex
+        component: TasksIndex,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/services',
         name: 'ScheduledTaskIndex',
-        component: ScheduledTaskIndex
+        component: ScheduledTaskIndex,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/services/:serviceName',
         name: 'ScheduledTaskEdit',
         component: ScheduledTaskEdit,
-        props: true
+        props: true,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/tables',
         name: 'TableMetadataIndex',
-        component: TableMetadataIndex
+        component: TableMetadataIndex,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/tables/:id',
         name: 'TableMetadataEdit',
         component: TableMetadataEdit,
-        props: true
+        props: true,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/recipients',
         name: 'NotificationRecipientIndex',
-        component: NotificationRecipientIndex
+        component: NotificationRecipientIndex,
+        meta: {requiresAuth: false, hideNavbar: true}
     },
     {
         path: '/notificationlogs',
         name: 'NotificationLogIndex',
-        component: NotificationLogIndex
+        component: NotificationLogIndex,
+        meta: {requiresAuth: false, hideNavbar: true}
     }
 
 ];
@@ -99,6 +141,15 @@ const routes = [
 const router = new Router({
     mode: 'history',
     routes
+});
+
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token');
+    if (to.matched.some(record => record.meta.requiresAuth) && !token) {
+        next('/login');
+    } else {
+        next();
+    }
 });
 
 export default router;

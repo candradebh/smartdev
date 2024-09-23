@@ -2,7 +2,7 @@ services:
   ollama:
     image: 'ollama/ollama:latest'
     ports:
-      - '11000:11434'
+      - '11434:11434'
     environment:
       - "OLLAMA_MODELS=llama3.1"
     volumes:
@@ -16,7 +16,7 @@ services:
     depends_on:
       - ollama
     ports:
-      - 3000:8080
+      - 9000:8080
     environment:
       - "OLLAMA_API_BASE_URL=http://ollama:11000/api"
     extra_hosts:
@@ -30,7 +30,10 @@ services:
       - 'POSTGRES_USER=smartdev'
     ports:
       - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   ollama: { }
   open-webui: { }
+  postgres_data: { }

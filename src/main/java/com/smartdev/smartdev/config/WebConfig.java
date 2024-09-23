@@ -20,10 +20,19 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${github.token}")
     private String githubToken;
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("http://localhost:9998").allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS").allowedHeaders("*")
-                .allowCredentials(true);
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                // Permitir CORS para todos os endpoints (/**) e de um domínio específico
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:9500") // Domínio permitido
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos HTTP permitidos
+                        .allowedHeaders("Content-Type", "Authorization") // Cabeçalhos permitidos
+                        .allowCredentials(true); // Permitir envio de cookies
+            }
+        };
     }
 
     @Bean

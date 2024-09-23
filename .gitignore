@@ -34,3 +34,22 @@ build/
 /smartdev.log
 /logs/spring-boot-app.log
 /spring-shell.log
+
+
+### configs ###
+/src/main/resources/application.properties
+
+## credentials ##
+src/main/resources/credentials/
+
+## banco de dados
+data/
+data/kafka.mv.db
+
+## logs ##
+/logs
+
+## frontend ##
+/my-dashboard/node/
+/my-dashboard/node/node.exe
+/my-dashboard/node_modules/

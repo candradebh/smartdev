@@ -8,28 +8,28 @@
     </div>
 
     <v-data-table
-        :disable-pagination="true"
-        :headers="headers"
-        :items="volumetries"
-        class="elevation-1"
-        fixed-header
+      :headers="headers"
+      :items="volumetries"
+      :disable-pagination="true"
+      class="elevation-1"
+      fixed-header
     >
       <template v-slot:[`item.dataBusca`]="{ item }">
         {{ item.dataBusca | formatDate }}
       </template>
-
+      
       <template v-slot:[`item.actions`]="{ item }">
         <v-btn @click="viewDetails(clientName, item.tabela)">Detalhes</v-btn>
         <v-btn @click="openPopup(item)">Ver queries</v-btn>
       </template>
     </v-data-table>
 
-    <PopupQueries v-if="showPopup" :volumetry="selectedVolumetry" @close="closePopup"/>
+    <PopupQueries v-if="showPopup" :volumetry="selectedVolumetry" @close="closePopup" />
   </div>
 </template>
 
 <script>
-import PopupQueries from '@/components/PopUpQueries.vue';
+import PopupQueries from '@/components/PopUpQueries.vue'; 
 
 export default {
   name: 'VolumetryDetails',
@@ -43,13 +43,13 @@ export default {
       showPopup: false,
       selectedVolumetry: null,
       headers: [
-        {text: 'Nome da Tabela', value: 'tabela'},
-        {text: 'Data da Busca', value: 'dataBusca'},
-        {text: 'Postgres', value: 'postgres'},
-        {text: 'Bigquery', value: 'bigquery'},
-        {text: 'Diferença', value: 'difference'},
-        {text: 'Status', value: 'status'},
-        {text: 'Ações', value: 'actions', sortable: false}
+        { text: 'Nome da Tabela', value: 'tabela' },
+        { text: 'Data da Busca', value: 'dataBusca' },
+        { text: 'Postgres', value: 'postgres' },
+        { text: 'Bigquery', value: 'bigquery' },
+        { text: 'Diferença', value: 'difference' },
+        { text: 'Status', value: 'status' },
+        { text: 'Ações', value: 'actions', sortable: false }
       ],
     };
   },
@@ -82,7 +82,7 @@ export default {
       this.selectedVolumetry = null;
     },
     viewDetails(clientName, tableName) {
-      this.$router.push({name: 'VolumetryTableDetails', params: {clientName, tableName}});
+      this.$router.push({ name: 'VolumetryTableDetails', params: { clientName, tableName } });
     },
   }
 };
