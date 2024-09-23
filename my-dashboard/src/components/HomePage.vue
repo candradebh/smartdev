@@ -3,9 +3,9 @@
     <v-container>
       <v-row>
         <!-- Card para Total de Projetos -->
-        <v-col cols="12" sm="6" md="4">
+        <v-col cols="12" md="4" sm="6">
           <v-card class="mx-auto" max-width="400">
-            <v-card-title>Total de Projetos </v-card-title>
+            <v-card-title>Total de Projetos</v-card-title>
             <v-card-text class="d-flex justify-center align-center">
               <span class="display-2">{{ totalProjects }}</span>
             </v-card-text>
@@ -13,7 +13,7 @@
         </v-col>
 
         <!-- Card para Total de Modelos IA -->
-        <v-col cols="12" sm="6" md="4">
+        <v-col cols="12" md="4" sm="6">
           <v-card class="mx-auto" max-width="400">
             <v-card-title>Total Modelos IA</v-card-title>
             <v-card-text class="d-flex justify-center align-center">
@@ -22,8 +22,8 @@
           </v-card>
         </v-col>
 
-         <!-- Card para Total de TAsks -->
-         <v-col cols="12" sm="6" md="4">
+        <!-- Card para Total de TAsks -->
+        <v-col cols="12" md="4" sm="6">
           <v-card class="mx-auto" max-width="400">
             <v-card-title>Total Tasks</v-card-title>
             <v-card-text class="d-flex justify-center align-center">
@@ -58,17 +58,21 @@ export default {
   methods: {
     async fetchTotalProjects() {
       const objeto = 'projetos';
+      const token = localStorage.getItem('token'); // Ou de onde você armazenou o token JWT
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
       try {
-        const response = await this.$api.get(this.apiEndpoints.projects);
+        const response = await this.$api.get(this.apiEndpoints.projects, {headers});
 
         if (response && response.data) {
           this.totalProjects = response.data.length;
         } else {
-          console.warn('Resposta inesperada ao obter número de '+objeto+':', response);
+          console.warn('Resposta inesperada ao obter número de ' + objeto + ':', response);
         }
       } catch (error) {
-        console.error('Erro ao obter número de '+objeto+':', error);
-        this.showErrorNotification('Ocorreu um erro ao buscar os '+objeto+'. Tente novamente mais tarde.');
+        console.error('Erro ao obter número de ' + objeto + ':', error);
+        this.showErrorNotification('Ocorreu um erro ao buscar os ' + objeto + '. Tente novamente mais tarde.');
       }
     },
     async fetchTotalModels() {
@@ -79,11 +83,11 @@ export default {
         if (response && response.data) {
           this.totalModels = response.data.length;
         } else {
-          console.warn('Resposta inesperada ao obter número de '+objeto+':', response);
+          console.warn('Resposta inesperada ao obter número de ' + objeto + ':', response);
         }
       } catch (error) {
         console.error('Erro ao obter número de modelos IA:', error);
-        this.showErrorNotification('Ocorreu um erro ao buscar os '+objeto+'. Tente novamente mais tarde.');
+        this.showErrorNotification('Ocorreu um erro ao buscar os ' + objeto + '. Tente novamente mais tarde.');
       }
     },
     async fetchTotalTasks() {
@@ -94,11 +98,11 @@ export default {
         if (response && response.data) {
           this.totalTasks = response.data.length;
         } else {
-          console.warn('Resposta inesperada ao obter número de '+objeto+':', response);
+          console.warn('Resposta inesperada ao obter número de ' + objeto + ':', response);
         }
       } catch (error) {
-        console.error('Erro ao obter número de '+objeto+':', error);
-        this.showErrorNotification('Ocorreu um erro ao buscar os '+objeto+'. Tente novamente mais tarde.');
+        console.error('Erro ao obter número de ' + objeto + ':', error);
+        this.showErrorNotification('Ocorreu um erro ao buscar os ' + objeto + '. Tente novamente mais tarde.');
       }
     },
 

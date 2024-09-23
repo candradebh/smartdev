@@ -72,6 +72,7 @@ export default {
     drawer: false,
     items: [
       {title: 'Home', path: '/'},
+      {title: 'Projetos', path: '/projects'},
       {title: 'Serviços', path: '/services'},
       {title: 'Destinatários', path: '/recipients'},
       {title: 'Log Notificação', path: '/notificationlogs'},

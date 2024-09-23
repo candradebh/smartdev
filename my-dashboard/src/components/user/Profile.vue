@@ -75,7 +75,7 @@ export default {
         }
 
         // Obter os dados do usuário logado ao carregar a página para garantir que estejam sincronizados
-        this.$api.get('/auth/profile')
+        this.$api.get('/users/profile')
             .then(response => {
                 const user = response.data;
                 delete user.password;
@@ -94,7 +94,7 @@ export default {
         updateProfile() {
             this.$refs.profileForm.validate();
             if (this.valid) {
-                this.$api.put('/auth/profile', this.profile)
+                this.$api.put('/users/profile', this.profile)
                     .then(response => {
                         const updatedUser = response.data;
                         delete updatedUser.password;
@@ -108,7 +108,7 @@ export default {
         changePassword() {
             this.$refs.passwordForm.validate();
             if (this.validPassword && this.password.newPassword === this.password.confirmNewPassword) {
-                this.$api.post('/auth/change-password', {
+                this.$api.post('/users/change-password', {
                     oldPassword: this.password.oldPassword,
                     newPassword: this.password.newPassword
                 })

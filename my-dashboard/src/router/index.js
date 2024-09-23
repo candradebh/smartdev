@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import HomePage from '@/components/HomePage.vue';
 import Login from '@/components/auth/Login.vue';
-import Register from '@/components/user/Register.vue';
+import Register from '@/components/auth/Register.vue';
 import Profile from '@/components/user/Profile.vue';
 import Settings from '@/components/user/Settings.vue';
 import ProjectList from '@/components/projects/ProjectList.vue';
@@ -57,83 +57,83 @@ const routes = [
         path: '/developer',
         name: 'DeveloperChat',
         component: DeveloperChat,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/projects',
         name: 'ProjectList',
         component: ProjectList,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/projects/create',
         name: 'ProjectForm',
         component: ProjectsForm,
         props: true,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/projects/:projectId/details',
         name: 'ProjectDetails',
         component: ProjectDetails,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/models',
         name: 'ModelIndex',
         component: ModelsIndex,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/models/create',
         name: 'ModelForm',
         component: ModelForm,
         props: true,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/tasks',
         name: 'TasksIndex',
         component: TasksIndex,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/services',
         name: 'ScheduledTaskIndex',
         component: ScheduledTaskIndex,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/services/:serviceName',
         name: 'ScheduledTaskEdit',
         component: ScheduledTaskEdit,
         props: true,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/tables',
         name: 'TableMetadataIndex',
         component: TableMetadataIndex,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/tables/:id',
         name: 'TableMetadataEdit',
         component: TableMetadataEdit,
         props: true,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/recipients',
         name: 'NotificationRecipientIndex',
         component: NotificationRecipientIndex,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     },
     {
         path: '/notificationlogs',
         name: 'NotificationLogIndex',
         component: NotificationLogIndex,
-        meta: {requiresAuth: false, hideNavbar: true}
+        meta: {requiresAuth: true}
     }
 
 ];
@@ -145,6 +145,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token');
+    //console.log(token)
     if (to.matched.some(record => record.meta.requiresAuth) && !token) {
         next('/login');
     } else {
