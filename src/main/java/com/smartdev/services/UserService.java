@@ -4,18 +4,20 @@ import com.smartdev.dto.request.ChangePasswordDTO;
 import com.smartdev.dto.request.UpdateProfileDTO;
 import com.smartdev.entity.UserEntity;
 import com.smartdev.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
 
     public UserEntity registerUser(UserEntity user) {
