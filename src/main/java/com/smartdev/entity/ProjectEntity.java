@@ -33,7 +33,7 @@ public class ProjectEntity extends EntityBase {
     // diretorio do git
     private String gitPath;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private Boolean isActive;

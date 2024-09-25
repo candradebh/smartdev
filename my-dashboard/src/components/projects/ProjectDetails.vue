@@ -5,7 +5,7 @@
         <h2>{{ project.name }}</h2>
 
         <!-- Botão para abrir o modal de adição de tag -->
-        <v-btn color="primary" @click="openModal">Adicionar Tag</v-btn>
+        <v-btn color="primary" @click="openModal">Adicionar Tecnologias</v-btn>
 
         <!-- Data Table para Exibir Features -->
         <v-data-table :headers="headers" :items="features" class="mt-5">

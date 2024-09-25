@@ -41,6 +41,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 username = jwtUtil.extractUsername(jwt);
             } catch (ExpiredJwtException e) {
                 logger.warn("Token expirado");
+
+                // Resposta para token expirado
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"message\": \"Token expirado\"}");
+                return; // Interrompe a cadeia de filtros
             }
         }
 
@@ -62,5 +68,5 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
-    
+
 }

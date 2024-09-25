@@ -72,7 +72,10 @@ export default {
     drawer: false,
     items: [
       {title: 'Home', path: '/'},
+      {title: 'Chat', path: '/developer'},
       {title: 'Projetos', path: '/projects'},
+      {title: 'Tasks', path: '/tasks'},
+      {title: 'Modelos IA', path: '/models'},
       {title: 'Serviços', path: '/services'},
       {title: 'Destinatários', path: '/recipients'},
       {title: 'Log Notificação', path: '/notificationlogs'},

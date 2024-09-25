@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.logging.Logger;
 
 @RestController
@@ -55,29 +54,12 @@ public class ProjectController {
     @PutMapping("/{id}")
     public ResponseEntity<ProjectEntity> updateProject(@PathVariable Long id, @RequestBody ProjectEntity projectDetails) {
 
-        return projectRepository.findById(id).map(new Function<ProjectEntity, ResponseEntity<ProjectEntity>>() {
-            @Override
-            public ResponseEntity<ProjectEntity> apply(ProjectEntity project) {
-                String repoUrl = gitHubRepository + project.getName();
-
-                // nao permitir a alteracao desse campo
-                if (projectDetails.getGitPath() != null && projectDetails.getGitPath().equals(repoUrl) == false) {
-                    project.setGitPath(repoUrl);
-                }
-
-                // project.setName(projectDetails.getName());// C:/projetos/teste/
-                project.setDescription(projectDetails.getDescription());
-                project.setWorkspacePath(projectDetails.getWorkspacePath());
-                project.setGitPath(projectDetails.getGitPath());
-                project.setIsActive(projectDetails.getIsActive());
-                // project.setFeatures(projectDetails.getFeatures());
-                ProjectEntity updatedProject = projectRepository.save(project);
-
-                gitHubService.updateReadmeAndPush(updatedProject);
-
-                return ResponseEntity.ok(updatedProject);
-            }
-        }).orElse(ResponseEntity.notFound().build());
+        ProjectEntity v_project = projectService.updateProject(id, projectDetails);
+        if (v_project != null) {
+            return ResponseEntity.ok(v_project);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")

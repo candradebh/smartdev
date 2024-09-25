@@ -20,5 +20,7 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
 
     // Buscar tasks por status e que não foram deletadas
     List<TaskEntity> findByStatusAndDeletedFalse(TaskStatus status);
+
+    TaskEntity findByTitleAndAndProject(String title, ProjectEntity project);
 }
 
