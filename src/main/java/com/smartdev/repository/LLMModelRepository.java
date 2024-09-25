@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface LLMModelRepository extends JpaRepository<LLMModelEntity, Long> {
 
     Optional<LLMModelEntity> findByName(String name);
+
+    LLMModelEntity findByDefaultModelTrue();
 }

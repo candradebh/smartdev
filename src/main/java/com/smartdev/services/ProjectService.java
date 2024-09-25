@@ -2,20 +2,18 @@ package com.smartdev.services;
 
 import com.smartdev.controller.ProjectController;
 import com.smartdev.entity.FeatureEntity;
+import com.smartdev.entity.LLMModelEntity;
 import com.smartdev.entity.ProjectEntity;
 import com.smartdev.entity.TaskEntity;
 import com.smartdev.enums.TaskStatus;
 import com.smartdev.repository.FeatureRepository;
+import com.smartdev.repository.LLMModelRepository;
 import com.smartdev.repository.ProjectRepository;
 import com.smartdev.repository.TaskRepository;
-import org.kohsuke.github.GHCreateRepositoryBuilder;
-import org.kohsuke.github.GitHub;
-import org.kohsuke.github.GitHubBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,17 +46,20 @@ public class ProjectService {
     @Autowired
     private TaskRepository taskRepository;
 
+    @Autowired
+    private LLMModelService llmModelService;
 
-    public String createRepository(String name, String description, boolean isPrivate) throws IOException {
-        GitHub github = new GitHubBuilder().withOAuthToken(githubToken).build();
-        GHCreateRepositoryBuilder builder = github.createRepository(name).description(description).private_(isPrivate).autoInit(true); // Inicializa com README
+    @Autowired
+    private LLMModelRepository llmModelRepository;
 
-        // Adicione configurações adicionais conforme necessário
 
-        return builder.create().getHtmlUrl().toString();
-    }
-
-    public ProjectEntity createRepositoryInGitAndClone(ProjectEntity project) {
+    /**
+     * Cria um projeto no git e atualiza rreadme
+     *
+     * @param project
+     * @return
+     */
+    public void createRepositoryInGitAndClone(ProjectEntity project) {
         try {
             String repoUrl = gitHubService.createRepository(project, false);
 
@@ -73,7 +74,6 @@ public class ProjectService {
             logger.info("Falha ao tenta criar projeto e/ou clonar o repositório");
         }
 
-        return projectRepository.save(project);
     }
 
     public ProjectEntity addFeatureToProject(Long projectId, FeatureEntity feature) {
@@ -126,10 +126,9 @@ public class ProjectService {
             if (projectDetails.getGitPath() != null && !projectDetails.getGitPath().equals(repoUrl)) {
                 project.setGitPath(repoUrl);
             }
-
-            // project.setName(projectDetails.getName());// C:/projetos/teste/
+            projectDetails.setDescription(this.changeDescriptionWithIA(projectDetails).getDescription());
             project.setDescription(projectDetails.getDescription());
-            project.setWorkspacePath(projectDetails.getWorkspacePath());
+            project.setWorkspacePath(projectDetails.getWorkspacePath());// C:/projetos/teste/
             project.setGitPath(projectDetails.getGitPath());
             project.setIsActive(projectDetails.getIsActive());
             // project.setFeatures(projectDetails.getFeatures());
@@ -164,6 +163,7 @@ public class ProjectService {
         task2.setStatus(TaskStatus.TODO);
 
         v_listBasicsTasks.add(task1);
+        v_listBasicsTasks.add(task2);
 
         //remove se ja existir
         for (TaskEntity v_task : v_listBasicsTasks) {
@@ -173,4 +173,26 @@ public class ProjectService {
         return v_listBasicsTasks;
     }
 
+    // melhora a descricao utilizando a IA
+    public ProjectEntity changeDescriptionWithIA(ProjectEntity project) {
+
+        LLMModelEntity v_modelDefault = llmModelRepository.findByDefaultModelTrue();
+        if (v_modelDefault == null) {
+            v_modelDefault = llmModelRepository.findAll().stream().findFirst().orElse(null);
+
+            //se ainda for null ixqueci
+            if (v_modelDefault == null) {
+                return project;
+            }
+        }
+
+        //v v_mensagem = "Introdução do meu projeto: \n" + project.getDefaultIntro();
+        String v_mensagem = "\n Melhore a minha descrição resumida: " + project.getDescription();
+        v_mensagem += "\n Não me responda com explicações, introduções, variáveis. Apenas o texto da descrição melhorada por você para eu salvar";
+
+        String v_descriptionWithIa = llmModelService.sendToLlmApi(v_mensagem, v_modelDefault.getId());
+        project.setDescription(v_descriptionWithIa);
+
+        return project;
+    }
 }

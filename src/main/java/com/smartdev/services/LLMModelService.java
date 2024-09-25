@@ -45,12 +45,20 @@ public class LLMModelService {
             List<LLMModelEntity> v_listaModels = llmModelRepository.findAll();
 
             if (response != null && response.getModels() != null) {
+
+                LLMModelEntity v_modelDefault = llmModelRepository.findByDefaultModelTrue();
+
                 for (LLMModelEntity llmModelEntity : response.getModels()) {
                     try {
                         Optional<LLMModelEntity> v_llmOpt = llmModelRepository.findByName(llmModelEntity.getName());
-                        if (!v_llmOpt.isPresent()) {
+                        if (v_llmOpt.isEmpty()) {
+
+                            if (v_modelDefault == null) {
+                                llmModelEntity.setDefaultModel(true);
+                            }
                             llmModelRepository.save(llmModelEntity);
                         }
+
 
                     } catch (Exception e) {
                         //throw new RuntimeException(e);
@@ -84,51 +92,14 @@ public class LLMModelService {
         return messageRepository.findByProjectIsNull();
     }
 
-    public String processMessage(MessageRequestDTO messageRequest) {
-        Long projectId = messageRequest.getProjectId();
-        Long modelId = messageRequest.getModelId();
-        String message = messageRequest.getMessage();
-
-        ProjectEntity project = null;
-
-        // Busca o projeto
-        if (projectId != null) {
-            project = projectRepository.findById(projectId).orElse(null);
-        }
+    public String processMessage(String message, String model) {
 
 
-        // Salva a mensagem do usuário no banco
-        MessageEntity userMessageEntity = new MessageEntity();
-        userMessageEntity.setProject(project);
-        userMessageEntity.setMessage(message);
-        userMessageEntity.setSender("user");
-        userMessageEntity.setTimestamp(LocalDateTime.now());
-        messageRepository.save(userMessageEntity);
-
-        //tratando a pergunta se possuir um projeto associado
-        String v_perguntaTratada = "";
-        if (project != null) {
-            v_perguntaTratada = project.getDefaultIntro() + "Minha pergunta para voce é: " + userMessageEntity.getMessage();
-        } else {
-            v_perguntaTratada = userMessageEntity.getMessage();
-        }
-
-        // Faz a requisição para o modelo de LLM
-        String botResponse = this.sendToLlmApi(v_perguntaTratada, modelId);
-
-        // Salva a resposta da IA
-        MessageEntity botMessageEntity = new MessageEntity();
-        botMessageEntity.setProject(project);
-        botMessageEntity.setMessage(botResponse);
-        botMessageEntity.setSender("bot");
-        botMessageEntity.setTimestamp(LocalDateTime.now());
-        messageRepository.save(botMessageEntity);
-
-        return botResponse;
+        return "";
     }
 
     // Método que envia a requisição HTTP para o LLM
-    private String sendToLlmApi(String userMessage, Long modelId) {
+    public String sendToLlmApi(String userMessage, Long modelId) {
         // Define a URL da API de LLM;
         String apiUrl = llmEndpoint + "/api/chat"; // Ajuste para a URL correta
 
@@ -169,5 +140,49 @@ public class LLMModelService {
             }
         }
         return "Erro ao processar a mensagem";
+    }
+
+    public String processMessageRequest(MessageRequestDTO messageRequest) {
+
+        Long projectId = messageRequest.getProjectId();
+        Long modelId = messageRequest.getModelId();
+        String message = messageRequest.getMessage();
+
+        ProjectEntity project = null;
+
+        // Busca o projeto
+        if (projectId != null) {
+            project = projectRepository.findById(projectId).orElse(null);
+        }
+
+
+        // Salva a mensagem do usuário no banco
+        MessageEntity userMessageEntity = new MessageEntity();
+        userMessageEntity.setProject(project);
+        userMessageEntity.setMessage(message);
+        userMessageEntity.setSender("user");
+        userMessageEntity.setTimestamp(LocalDateTime.now());
+        messageRepository.save(userMessageEntity);
+
+        //tratando a pergunta se possuir um projeto associado
+        String v_perguntaTratada = "";
+        if (project != null) {
+            v_perguntaTratada = project.getDefaultIntro() + "Minha pergunta para voce é: " + userMessageEntity.getMessage();
+        } else {
+            v_perguntaTratada = userMessageEntity.getMessage();
+        }
+
+        // Faz a requisição para o modelo de LLM
+        String botResponse = this.sendToLlmApi(v_perguntaTratada, modelId);
+
+        // Salva a resposta da IA
+        MessageEntity botMessageEntity = new MessageEntity();
+        botMessageEntity.setProject(project);
+        botMessageEntity.setMessage(botResponse);
+        botMessageEntity.setSender("bot");
+        botMessageEntity.setTimestamp(LocalDateTime.now());
+        messageRepository.save(botMessageEntity);
+
+        return botResponse;
     }
 }

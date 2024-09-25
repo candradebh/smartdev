@@ -32,6 +32,7 @@ public class InitialDataLoader {
 
     @Autowired
     private ParameterRepository parameterRepository;
+    
 
     @Bean
     public CommandLineRunner loadData() {

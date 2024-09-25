@@ -35,4 +35,9 @@ public class LLMModelEntity {
 
     @Embedded
     private LLMModelDetails details;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean defaultModel;
+
+
 }

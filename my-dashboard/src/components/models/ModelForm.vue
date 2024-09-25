@@ -8,6 +8,7 @@
       <v-form ref="form">
         <v-text-field v-model="form.name" label="Name" required></v-text-field>
         <v-text-field v-model="form.model" label="Model" required></v-text-field>
+        <v-switch v-model="form.defaultModel" label="Modelo padrão"></v-switch>
       </v-form>
     </v-card-text>
 
@@ -36,7 +37,8 @@ export default {
         model: '',
         modified_at: '',
         size: '',
-        digest: ''
+        digest: '',
+        defaultModel: false
       }
 
     };
@@ -45,7 +47,7 @@ export default {
     itemModel: {
       handler(newValue) {
         if (newValue) {
-          this.form = { ...newValue };
+          this.form = {...newValue};
         } else {
           this.resetForm();
         }
@@ -54,7 +56,7 @@ export default {
     }
   },
   methods: {
-    cancel(){
+    cancel() {
       this.$router.push(this.routeIndex);
     },
     resetForm() {
@@ -64,14 +66,15 @@ export default {
         model: '',
         modified_at: '',
         size: '',
-        digest: ''
+        digest: '',
+        defaultModel: false
       };
     },
     saveModel() {
       if (this.$refs.form.validate()) {
         const request = this.form.id
-          ? this.$api.put(`${this.apiIndex}/${this.form.id}`, this.form)
-          : this.$api.post(`${this.apiIndex}`, this.form);
+            ? this.$api.put(`${this.apiIndex}/${this.form.id}`, this.form)
+            : this.$api.post(`${this.apiIndex}`, this.form);
 
         request.then(() => {
           this.$router.push(this.routeIndex);

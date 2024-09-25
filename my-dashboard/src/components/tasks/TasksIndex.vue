@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="4" v-for="status in statuses" :key="status">
+      <v-col v-for="status in statuses" :key="status" cols="4">
         <v-card>
           <v-card-title class="d-flex justify-space-between">
             {{ status }}
@@ -10,7 +10,7 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <draggable v-model="tasks[status]" :group="'tasks'" :data-id="status" @end="updateTaskStatus">
+            <draggable v-model="tasks[status]" :data-id="status" :group="'tasks'" @end="updateTaskStatus">
               <v-list dense>
                 <v-list-item v-for="task in tasks[status]" :key="task.id">
                   <v-list-item-content>
@@ -24,7 +24,7 @@
                   <v-btn icon @click="deleteTask(task.id)">
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
-                  
+
                 </v-list-item>
               </v-list>
             </draggable>
@@ -46,7 +46,10 @@
             <v-textarea v-model="task.description" :rules="[rules.required]" label="Description" required></v-textarea>
 
             <v-select v-model="task.status" :items="statuses" :rules="[rules.required]" label="Status"
-              required></v-select>
+                      required></v-select>
+
+            <v-select v-model="task.project" :items="statuses" :rules="[rules.required]" label="Status"
+                      required></v-select>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -63,7 +66,7 @@ import draggable from 'vuedraggable';
 
 export default {
   name: 'TasksIndex',
-  components: { draggable },
+  components: {draggable},
   data() {
     return {
       statuses: ['TODO', 'IN_PROGRESS', 'DONE'],
@@ -90,7 +93,7 @@ export default {
       this.$api.get('/tasks').then((response) => {
         this.statuses.forEach((status) => {
           this.tasks[status] = response.data.filter(
-            (task) => task.status === status
+              (task) => task.status === status
           );
         });
       });
@@ -123,12 +126,13 @@ export default {
         title: '',
         description: '',
         status: status, // O status da coluna
+        project: ''
       };
       this.dialog = true;
     },
     editTask(task) {
       // Abrir modal para editar task
-      this.task = { ...task };
+      this.task = {...task};
       this.dialog = true;
     },
     closeDialog() {
@@ -138,6 +142,7 @@ export default {
         title: '',
         description: '',
         status: 'TODO',
+        project: ''
       };
     },
     saveTask() {
@@ -148,13 +153,13 @@ export default {
       };
       if (this.task.id) {
         // Atualizar task existente
-        this.$api.put(`/tasks/${this.task.id}`, this.task,extraParameter).then(() => {
+        this.$api.put(`/tasks/${this.task.id}`, this.task, extraParameter).then(() => {
           this.fetchTasks();
           this.closeDialog();
         });
       } else {
         // Criar nova task
-        this.$api.post('/tasks', this.task,extraParameter).then(() => {
+        this.$api.post('/tasks', this.task, extraParameter).then(() => {
           this.fetchTasks();
           this.closeDialog();
         });

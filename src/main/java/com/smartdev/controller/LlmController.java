@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @RestController
@@ -26,7 +27,7 @@ public class LlmController {
 
     @PostMapping("/message")
     public ResponseEntity<String> processMessage(@RequestBody MessageRequestDTO messageRequest) {
-        String response = llmService.processMessage(messageRequest);
+        String response = llmService.processMessageRequest(messageRequest);
         return ResponseEntity.ok(response);
     }
 
@@ -50,6 +51,23 @@ public class LlmController {
     @PostMapping
     public ResponseEntity<LLMModelEntity> create(@RequestBody LLMModelEntity entity) {
         return ResponseEntity.ok(llmModelRepository.save(entity));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<LLMModelEntity> update(@PathVariable Long id, @RequestBody LLMModelEntity entity) {
+
+        Optional<LLMModelEntity> v_modelOpt = llmModelRepository.findById(id);
+        if (v_modelOpt.isPresent()) {
+
+            LLMModelEntity v_model = v_modelOpt.get();
+            
+            v_model.setDefaultModel(entity.isDefaultModel());
+
+            return ResponseEntity.ok(v_model);
+
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

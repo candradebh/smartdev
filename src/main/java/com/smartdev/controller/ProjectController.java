@@ -48,7 +48,12 @@ public class ProjectController {
 
     @PostMapping
     public ProjectEntity createProject(@RequestBody ProjectEntity project) {
-        return projectService.createRepositoryInGitAndClone(project);
+        
+        ProjectEntity v_project = projectService.changeDescriptionWithIA(project);
+
+        projectService.createRepositoryInGitAndClone(project);
+
+        return projectRepository.save(v_project);
     }
 
     @PutMapping("/{id}")

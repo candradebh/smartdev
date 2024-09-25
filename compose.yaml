@@ -5,14 +5,15 @@ services:
       - '11434:11434'
     environment:
       - "OLLAMA_MODELS=llama3.1"
+    restart: unless-stopped
     volumes:
-      - ollama:/root/.ollama
+      - ./data/ollama_data:/ollama/data
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
     pull_policy: missing
     volumes:
-      - open-webui:/app/backend/data
+      - ./data/open-webui:/app/backend/data
     depends_on:
       - ollama
     ports:
@@ -31,9 +32,5 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  ollama: { }
-  open-webui: { }
-  postgres_data: { }
+      - ./data/postgres_data:/var/lib/postgresql/data
+    restart: always
