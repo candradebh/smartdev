@@ -7,13 +7,13 @@ services:
       - "OLLAMA_MODELS=llama3.1"
     restart: unless-stopped
     volumes:
-      - ./data/ollama_data:/ollama/data
+      - 'C:/datalake/ollama_data:/ollama/data'
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
     pull_policy: missing
     volumes:
-      - ./data/open-webui:/app/backend/data
+      - 'C:/datalake/open-webui:/app/backend/data'
     depends_on:
       - ollama
     ports:
@@ -32,5 +32,23 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - ./data/postgres_data:/var/lib/postgresql/data
+      - 'C:/datalake/postgres_data:/var/lib/postgresql/data'
     restart: always
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    restart: always
+    hostname: 'gitlab.local'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+      GITLAB_ROOT_PASSWORD: 'Cama2209*'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '2224:22'
+    volumes:
+      - 'C:/datalake/gitlab/config:/etc/gitlab'
+      - 'C:/datalake/gitlab/logs:/var/log/gitlab'
+      - 'C:/datalake/gitlab/data:/var/opt/gitlab'
