@@ -22,7 +22,8 @@ public class TaskController {
 
     @GetMapping
     public List<TaskEntity> getAllTasks() {
-        return taskRepository.findByDeletedFalse();
+        List<TaskEntity> v_listTasks = taskRepository.findByDeletedFalse();
+        return v_listTasks;
     }
 
     @PostMapping

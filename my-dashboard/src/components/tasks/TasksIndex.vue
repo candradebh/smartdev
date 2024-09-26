@@ -48,7 +48,8 @@
             <v-select v-model="task.status" :items="statuses" :rules="[rules.required]" label="Status"
                       required></v-select>
 
-            <v-select v-model="task.project" :items="statuses" :rules="[rules.required]" label="Status"
+            <v-select v-model="task.project" :items="projects" :rules="[rules.required]" item-text="name"
+                      item-value="id" label="Project"
                       required></v-select>
           </v-form>
         </v-card-text>
@@ -70,6 +71,7 @@ export default {
   data() {
     return {
       statuses: ['TODO', 'IN_PROGRESS', 'DONE'],
+      projects: [],
       tasks: {
         TODO: [],
         IN_PROGRESS: [],
@@ -82,6 +84,7 @@ export default {
         title: '',
         description: '',
         status: 'TODO',
+        project: null
       },
       rules: {
         required: (value) => !!value || 'Obrigatório.',
@@ -96,6 +99,11 @@ export default {
               (task) => task.status === status
           );
         });
+      });
+    },
+    fetchProjects() {
+      this.$api.get('/projects/isActive').then((response) => {
+        this.projects = response.data;
       });
     },
 
@@ -126,13 +134,14 @@ export default {
         title: '',
         description: '',
         status: status, // O status da coluna
-        project: ''
+        project: null
       };
       this.dialog = true;
     },
     editTask(task) {
       // Abrir modal para editar task
       this.task = {...task};
+      console.log(this.task);
       this.dialog = true;
     },
     closeDialog() {
@@ -142,7 +151,7 @@ export default {
         title: '',
         description: '',
         status: 'TODO',
-        project: ''
+        project: null
       };
     },
     saveTask() {
@@ -177,6 +186,7 @@ export default {
   },
   mounted() {
     this.fetchTasks();
+    this.fetchProjects();
   },
 };
 </script>

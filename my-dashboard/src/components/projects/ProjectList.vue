@@ -8,8 +8,8 @@
           <v-btn color="primary" @click="openForm(null)">Criar</v-btn>
         </v-toolbar>
       </template>
-      <template v-slot:[`item.date`]="{ item }">
-        {{ item.date | formatDate }}
+      <template v-slot:[`item.updated_at`]="{ item }">
+        {{ item.updated_at | formatDate }}
       </template>
 
       <template v-slot:[`item.actions`]="{ item }">
@@ -21,7 +21,7 @@
 
     <!-- Form Dialog -->
     <v-dialog v-model="dialogForm" max-width="500px">
-      <ProjectsForm :itemModel="selectedModel" @close="dialogForm = false" @save="fetchModels" />
+      <ProjectsForm :itemModel="selectedModel" @close="dialogForm = false" @save="fetchModels"/>
     </v-dialog>
 
     <!-- Delete Confirmation Dialog -->
@@ -44,7 +44,7 @@ import ProjectsForm from './ProjectsForm.vue';
 
 export default {
   name: 'ProjectList',
-  components: { ProjectsForm },
+  components: {ProjectsForm},
   data() {
     return {
       listModel: [],
@@ -52,13 +52,13 @@ export default {
       dialogForm: false,
       dialogDelete: false,
       headers: [
-        { text: 'ID', value: 'id' },
-        { text: 'Name', value: 'name' },
-        { text: 'Description', value: 'description' },
-        { text: 'Data', value: 'date' },
-        { text: 'workspacePath', value: 'workspacePath' },
-        { text: 'gitPath', value: 'gitPath' },
-        { text: 'Ações', value: 'actions', sortable: false }
+        {text: 'ID', value: 'id'},
+        {text: 'Name', value: 'name'},
+        {text: 'Description', value: 'description'},
+        {text: 'Updated at', value: 'updated_at'},
+        {text: 'Workspace', value: 'workspacePath'},
+        {text: 'GitPath', value: 'gitPath'},
+        {text: 'Actions', value: 'actions', sortable: false}
       ]
     };
   },
@@ -69,7 +69,7 @@ export default {
       });
     },
     openForm(model) {
-      this.$router.push({ name: 'ProjectForm', params: { itemModel: model } })
+      this.$router.push({name: 'ProjectForm', params: {itemModel: model}})
     },
     confirmDelete(model) {
       this.selectedModel = model;

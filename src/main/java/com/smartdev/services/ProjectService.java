@@ -149,25 +149,27 @@ public class ProjectService {
 
         List<TaskEntity> v_listBasicsTasks = new ArrayList<>();
 
-        TaskEntity task1 = new TaskEntity();
-        task1.setProject(project);
-        task1.setTitle("Analisar código geral");
-        task1.setDescription("Faz uma analise superficial do código para extrair algumas inforrmações.");
-        task1.setStatus(TaskStatus.TODO);
+        String v_titleTask1 = "Analisar código geral";
+        TaskEntity v_searchTask1 = taskRepository.findByTitleAndAndProject(v_titleTask1, project);
+        if (v_searchTask1 == null) {
+            TaskEntity task1 = new TaskEntity();
+            task1.setProject(project);
+            task1.setTitle(v_titleTask1);
+            task1.setDescription("Faz uma analise superficial do código para extrair algumas informações.");
+            task1.setStatus(TaskStatus.TODO);
 
+            v_listBasicsTasks.add(task1);
+        }
 
-        TaskEntity task2 = new TaskEntity();
-        task2.setProject(project);
-        task2.setTitle("Adicione Tecnologias ao seu projeto" + project.getName());
-        task2.setDescription("Adicione Tecnologias ao seu projeto" + project.getName());
-        task2.setStatus(TaskStatus.TODO);
-
-        v_listBasicsTasks.add(task1);
-        v_listBasicsTasks.add(task2);
-
-        //remove se ja existir
-        for (TaskEntity v_task : v_listBasicsTasks) {
-            v_listBasicsTasks.removeIf(t -> t.getTitle().equals(v_task.getTitle()));
+        String v_titleTask2 = "Adicione Tecnologias ao seu projeto";
+        TaskEntity v_searchTask2 = taskRepository.findByTitleAndAndProject(v_titleTask2, project);
+        if (v_searchTask2 == null) {
+            TaskEntity task2 = new TaskEntity();
+            task2.setProject(project);
+            task2.setTitle(v_titleTask2);
+            task2.setDescription("Adicione Tecnologias ao seu projeto para melhorarmos a documentação e te mair eficiência em nosso desenvolvimento.");
+            task2.setStatus(TaskStatus.TODO);
+            v_listBasicsTasks.add(task2);
         }
 
         return v_listBasicsTasks;
@@ -187,8 +189,9 @@ public class ProjectService {
         }
 
         //v v_mensagem = "Introdução do meu projeto: \n" + project.getDefaultIntro();
-        String v_mensagem = "\n Melhore a minha descrição resumida: " + project.getDescription();
-        v_mensagem += "\n Não me responda com explicações, introduções, variáveis. Apenas o texto da descrição melhorada por você para eu salvar";
+        String v_mensagem = "\n Fiz uma breve descrição sobre meu projeto: " + project.getDescription();
+        v_mensagem += "\n Por favor, me ajude a melhorar essa descrição, corrija erros de português e me responda apenas com o texto modificado. \n";
+        v_mensagem += "\n" + " Não me responda com explicações, títulos, introduções, variáveis.";
 
         String v_descriptionWithIa = llmModelService.sendToLlmApi(v_mensagem, v_modelDefault.getId());
         project.setDescription(v_descriptionWithIa);
